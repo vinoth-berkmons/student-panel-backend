@@ -1,11 +1,15 @@
 const student = require('./students');
 const course = require('./courses');
+const session = require('./session');
+const sessionsMiddleWare = require('../middlewares/session');
 
 function setRoutes(app) {
-  app.get('/students', student.getAll);
-  app.get('/students/:id', student.getOne);
-  app.post('/students/addCourse', student.enrollToCourse);
-  app.get('/courses', course.getAll);
+  app.get('/students', sessionsMiddleWare, student.getAll);
+  app.get('/students/:id', sessionsMiddleWare, student.getOne);
+  app.post('/students/addCourse', sessionsMiddleWare, student.enrollToCourse);
+  app.get('/courses', sessionsMiddleWare, course.getAll);
+  app.post('/courses', sessionsMiddleWare, course.create);
+  app.post('/login', session.login);
 }
 
 module.exports.initialize = setRoutes;

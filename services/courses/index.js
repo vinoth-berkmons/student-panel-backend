@@ -46,7 +46,23 @@ async function getCourse(id) {
     }
 }
 
+async function createCourse(course) {
+    const database = db.client().db(MAIN_DATABASE);
+    const coursesCollection = database.collection(COURSES_COLLECTION);
+    try {
+        const courseObj = { name: course.name, description: course.description, isActive: true, batch: course.batch, department: course.department, startDate: course.startDate, endDate: course.endDate };
+        const result = await coursesCollection.insertOne(courseObj);
+        if (!result.insertedId) {
+            throw `couldn't create the course`;
+        }
+        return { ...courseObj, id: result.insertedId };
+    } catch (err) {
+        throw `Error creating course: ${err}`;
+    }
+};
+
 module.exports = {
     getAll: getCourses,
     getOne: getCourse,
+    create: createCourse,
 }

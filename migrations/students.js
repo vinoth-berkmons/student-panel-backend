@@ -16,7 +16,7 @@ async function addUsers() {
     console.log('connected to database');
     try {
         const result = await services.db.client().db(MAIN_DATABASE).collection(STUDENTS_COLLECTION).insertMany(defaultStudents);
-        console.log(`${result.insertedCount} students were inserted`);
+        console.log(`${result.insertedCount} students are inserted`);
         process.exit(0);
     } catch (err) {
         console.error(`error inserting default students: ${err}`);

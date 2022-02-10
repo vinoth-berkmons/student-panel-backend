@@ -1,4 +1,8 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+
+
 const bodyParser = require('body-parser');
 
 const config = require('./config');
@@ -10,6 +14,8 @@ config.load();
 const app = express();
 const port = config.port();
 
+app.use(cors({ origin: config.frontendUrl() }));
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 services.db.connect(config.dbUrl()).then(() => {

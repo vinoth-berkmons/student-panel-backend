@@ -3,23 +3,27 @@ const ObjectId = require('mongodb').ObjectId;
 const { MAIN_DATABASE, STUDENTS_COLLECTION } = require("../constants");
 const db = require("../db");
 
-async function getStudents() {
+async function getStudents(pageSize, pageNumber) {
     const database = db.client().db(MAIN_DATABASE);
     const studentsCollection = database.collection(STUDENTS_COLLECTION);
     try {
-        const students = await studentsCollection.find({}).toArray();
-        return students.map(student => ({
-            id: student._id,
-            firstName: student.firstName,
-            lastName: student.lastName,
-            email: student.email,
-            mobile: student.mobile,
-            gender: student.gender,
-            dob: student.dob,
-            status: student.status,
-            department: student.department,
-            courses: student.courses,
-        }));
+        const students = await studentsCollection.find({}).skip(pageSize * (pageNumber - 1)).limit(pageSize).toArray();
+        const totalCount = await studentsCollection.count();
+        return {
+            students: students.map(student => ({
+                id: student._id,
+                firstName: student.firstName,
+                lastName: student.lastName,
+                email: student.email,
+                mobile: student.mobile,
+                gender: student.gender,
+                dob: student.dob,
+                status: student.status,
+                department: student.department,
+                courses: student.courses,
+            })),
+            totalCount,
+        };
     } catch (err) {
         throw `Error getting students: ${err}`;
     }

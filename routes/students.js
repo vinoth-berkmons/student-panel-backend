@@ -2,13 +2,15 @@ const services = require('../services');
 
 async function getStudents(req, res) {
     try {
-        const students = await services.students.getAll();
-        res.json({ success: true, data: students });
+        const pageSize = +req.query.pageSize || 1;
+        const page = +req.query.page || 1;
+        const result = await services.students.getAll(pageSize, page);
+        res.json({ success: true, data: { students: result.students, hasNextPage: page * pageSize < result.totalCount } });
     }
     catch (err) {
         console.error(`error fetching students: ${err}`);
-        res.status = 500;
-        res.json({ sucess: false, error: err });
+        res.status(500);
+        res.json({ success: false, error: err });
     }
 }
 
@@ -19,8 +21,8 @@ async function getStudent(req, res) {
     }
     catch (err) {
         console.error(`error fetching student: ${err}`);
-        res.status = 500;
-        res.json({ sucess: false, error: err });
+        res.status(500);
+        res.json({ success: false, error: err });
     }
 }
 
@@ -37,8 +39,8 @@ async function enrollToCourse(req, res) {
     }
     catch (err) {
         console.error(`adding course to student: ${err}`);
-        res.status = 500;
-        res.json({ sucess: false, error: err });
+        res.status(500);
+        res.json({ success: false, error: err });
     }
 }
 
